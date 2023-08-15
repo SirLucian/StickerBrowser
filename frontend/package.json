@@ -9,7 +9,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "keywords": ["react", "flask", "supabase", "image", "gallery"],
+  "keywords": [
+    "react",
+    "flask",
+    "supabase",
+    "image",
+    "gallery"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
@@ -19,5 +25,17 @@
     "axios": "^0.21.1",
     "react-infinite-scroll-component": "^6.1.0",
     "@supabase/supabase-js": "^1.11.6"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
