@@ -20,7 +20,7 @@ CORS(app)
 def get_images():
     start = request.args.get('start', default=0, type=int)
     end = request.args.get('end', default=50, type=int)
-    response = supabase.table('images').select().range(start, end)
+    response = supabase.table('images').select().range(start, end).execute()
     return jsonify(response['data'])
 
 @app.route('/favorite', methods=['POST'])
