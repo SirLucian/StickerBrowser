@@ -10,8 +10,7 @@ interface Image {
 
 export default function ImageGallery ({ images }: Image[]) {
     const [displayImages, setDisplayImages] = useState(3);
-    // const [images, setImages] = useState<Image[]>([]);
-    const [hasMore, setHasMore] = useState(true);
+
     const [selectedImage, setSelectedImage] = useState<Image | null>(null);
     
     useInfiniteScroll({
@@ -28,17 +27,6 @@ export default function ImageGallery ({ images }: Image[]) {
     const closeModal = () => {
       setSelectedImage(null);
     };
-    // useEffect(() => {
-    //     fetchImages();
-    //   }, []);
-    
-    //   const fetchImages = async () => {
-    //     const response = await axios.get<Image[]>('http://localhost:5000/images', {
-    //       params: { start: images.length, end: images.length + 50 },
-    //     });
-    //     setImages(images.concat(response.data));
-    //     if (response.data.length < 50) setHasMore(false);
-    //   };
     
     return (
       <>
@@ -63,23 +51,4 @@ export default function ImageGallery ({ images }: Image[]) {
         )}
       </>
     )
-  }
-
-
-export async function getServerSideProps() {
-    let images:Image[] = [];
-  
-    try {
-    const res = await axios.get<Image[]>('http://localhost:5000/images');
-      images = res.data;
-    } catch (e) {
-      console.error(e);
-    }
-  
-    return {
-      props: {
-        images
-      },
-      revalidate: 10
-    }
   }
