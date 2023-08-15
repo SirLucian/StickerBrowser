@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import React, { useState } from 'react';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import ImageModal from './ImageModal';
+import { v4 as uuid } from 'uuid';
 
-function ImageGallery() {
-  const [images, setImages] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(null);
+export default function ImageGallery({ images }) {
+  const [displayImages, setDisplayImages] = useState(3);
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
-
-  const fetchImages = async () => {
-    const response = await axios.get('http://localhost:5000/images', {
-      params: { start: images.length, end: images.length + 50 },
-    });
-    setImages(images.concat(response.data));
-    if (response.data.length < 50) setHasMore(false);
-  };
+  useInfiniteScroll({
+    trackElement: '#images-bottom',
+    containerElement: '#main'
+  }, () => {
+    setDisplayImages(oldVal => oldVal + 3);
+  });
 
   const openModal = (image) => {
     setSelectedImage(image);
@@ -29,27 +22,26 @@ function ImageGallery() {
   };
 
   return (
-    <div>
-      <InfiniteScroll
-        dataLength={images.length}
-        next={fetchImages}
-        hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
-      >
-        {images.map((image) => (
-          <img
-            key={image.id}
-            src={image.url}
-            alt=""
-            onClick={() => openModal(image)}
-          />
-        ))}
-      </InfiniteScroll>
+    <>
+      <main id="main">
+        <div className="container">
+          <h1 style={{ textAlign: 'center' }}>Image Gallery</h1>
+          {
+            images.slice(0, displayImages).map((image) => (
+              <img
+                key={uuid()}
+                src={image.url}
+                alt=""
+                onClick={() => openModal(image)}
+              />
+            ))
+          }
+          <div id="images-bottom"></div>
+        </div>
+      </main>
       {selectedImage && (
         <ImageModal image={selectedImage} onClose={closeModal} />
       )}
-    </div>
-  );
+    </>
+  )
 }
-
-export default ImageGallery;
