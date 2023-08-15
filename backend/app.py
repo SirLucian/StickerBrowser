@@ -20,19 +20,19 @@ CORS(app)
 def get_images():
     start = request.args.get('start', default=0, type=int)
     end = request.args.get('end', default=50, type=int)
-    response = supabase.table('images').select().range(start, end).execute()
+    response = supabase.table('stickers_view').select('*').range(start, end).execute()
     return jsonify(response['data'])
 
 @app.route('/favorite', methods=['POST'])
 def favorite_image():
     image_id = request.json['id']
-    response = supabase.table('images').update({'favorite': True}, ['id']).eq('id', image_id)
+    response = supabase.table('stickers_view').update({'favorite': True}, ['id']).eq('id', image_id)
     return jsonify(response['data'])
 
 @app.route('/unfavorite', methods=['POST'])
 def unfavorite_image():
     image_id = request.json['id']
-    response = supabase.table('images').update({'favorite': False}, ['id']).eq('id', image_id)
+    response = supabase.table('stickers_view').update({'favorite': False}, ['id']).eq('id', image_id)
     return jsonify(response['data'])
 
 @app.route('/removebg', methods=['POST'])
