@@ -36,8 +36,9 @@ export default function ImageGallery () {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [displayGenerations, setDisplayGenerations] = useState(0);
   const [selectedGeneration, setSelectedGeneration] = useState<Generation | null>(null);
-  const [start, setStart] = useState(0)
-    
+  const [start, setStart] = useState(0);
+  const ref = useRef();
+
   const fetchImages= useCallback(async () => {
     let { data: stickers_view, error } = await supabase
       .from('stickers_view')
@@ -83,7 +84,7 @@ useEffect(() => {
           imgAlt={generation.prompt}
           isLast={index === generation.generated_images.length - 1}
           newLimit={() => setStart(start + 20)}
-          ref={index === generation.generated_images.length - 1 ? ref : null}
+          ref={index === generation.generated_images.length - 1 ? ref.current : null}
         />
       </button>
     ))}
