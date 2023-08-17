@@ -1,40 +1,21 @@
-// useInfiniteScroll.js
-import React, { useLayoutEffect } from 'react'
+import { useEffect, useRef } from 'react';
 
-export default function useInfiniteScroll({
-    trackElement, // Element placed at bottom of scroll container
-    containerElement, // Scroll container, window used if not provided
-    multiplier = 1 // Adjustment for padding, margins, etc.
-    }, callback) {
-    useLayoutEffect(() => {
-        // Element whose position we want to track
-        const ele = document.querySelector(trackElement);
+export default function useInfiniteScroll(callback) {
+  const observer = useRef();
 
-        // If not containerElement provided, we use window
-        let container = window;
-        if (containerElement) {
-            container = document.querySelector(containerElement);
-        }
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
 
-        // Get window innerHeight or height of container (if provided)
-        let h;
-        if (containerElement) {
-            h = container.getBoundingClientRect().height;
-        } else {
-            h = container.innerHeight;
-        }
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        callback();
+      }
+    });
 
-        const handleScroll = () => {
-            const elePos = ele.getBoundingClientRect().y;
-            if (elePos * multiplier <= h) {
-                if (typeof callback === 'function') callback();
-            }
-        }
+    const currentObserver = observer.current;
 
-        // Set a passive scroll listener on our container
-        container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => currentObserver.disconnect();
+  }, [callback]);
 
-        // handle cleanup by removing scroll listener
-        return () => container.removeEventListener('scroll', handleScroll, { passive: true });
-    })
+  return [observer];
 }

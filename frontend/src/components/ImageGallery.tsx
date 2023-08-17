@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/utils/supabaseClient';
 import ImageModal from '@/components/ImageModal';
-import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import ImageCard from './ImageCard';
 
 export interface GeneratedImage {
@@ -48,6 +47,7 @@ export default function ImageGallery () {
 
         if (error) console.error(error);
         setGenerations((prev) => [...prev, ...stickers_view]);
+        
     }, [generations]);
 
 useEffect(() => {
@@ -57,8 +57,8 @@ useEffect(() => {
 
 
 
-    const openModal = (generation: Generation) => {
-      setSelectedGeneration(generation);
+    const openModal = (image: GeneratedImage) => {
+      setSelectedGeneration(image);
     };
   
     const closeModal = () => {
@@ -73,24 +73,24 @@ useEffect(() => {
             <div className='flex flex-wrap gap-4 justify-center'>
 
             {
-              generations?.map((generation: Generation) => (
-                <div key={generation.id}>
-                {generation.generated_images?.map((image, index)=>(
-                  <>
-                    <button onClick={() => openModal(image)}>
-                      <ImageCard 
-                        key={image.id}
-                        imgSrc={image.url}
-                        imgAlt={generation.prompt}
-                        isLast={index === generation.generated_images.length - 1}
-                        newLimit={() => setStart(start + 20)}
-                        />
-                    </button>
-                  </>
-                ))}
-                </div>
-              ))
-              }
+  generations?.map((generation: Generation, genIndex) => (
+    <div key={generation.id}>
+    {generation.generated_images?.map((image, index)=>(
+      <button key={`${image.id}-${index}`} 
+      onClick={() => openModal(image)} 
+      >
+        <ImageCard 
+          imgSrc={image.url}
+          imgAlt={generation.prompt}
+          isLast={index === generation.generated_images.length - 1}
+          newLimit={() => setStart(start + 20)}
+          ref={index === generation.generated_images.length - 1 ? ref : null}
+        />
+      </button>
+    ))}
+    </div>
+  ))
+}
               </div>
             <div id="generations-bottom"></div>
           </div>
