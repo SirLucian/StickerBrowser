@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 export default function ImageCard({
     imgAlt = 'placeholder',
     imgSrc = '/placeholder.jpg',
+    cardRef,
     newLimit,
     isLast,
   }) {
