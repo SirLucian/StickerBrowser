@@ -37,7 +37,6 @@ export default function ImageGallery () {
   const [displayGenerations, setDisplayGenerations] = useState(0);
   const [selectedGeneration, setSelectedGeneration] = useState<Generation | null>(null);
   const [start, setStart] = useState(0)
-
     
   const fetchImages= useCallback(async () => {
     let { data: stickers_view, error } = await supabase
