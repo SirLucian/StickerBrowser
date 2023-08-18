@@ -35,7 +35,7 @@ export interface Generation {
 
 
 
-export default function ImageGallery () {
+export default function ImageGallery ({ search }) {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedModal, setSelectedModal] = useState<GeneratedImage | null>(null);
   const [start, setStart] = useState(0);
@@ -61,6 +61,11 @@ export default function ImageGallery () {
   const closeModal = () => {
     setSelectedModal(null);
   };
+
+  const filteredGenerations = generations.filter(generation => 
+    generation.generated_images.some(image => image.url.includes(search))
+  );
+
 
   // Infinite scrolling setup
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -98,7 +103,7 @@ export default function ImageGallery () {
             <h1 style={{ textAlign: 'center' }}>Generation Gallery</h1>
             </div>
         <div className='flex flex-wrap gap-4 justify-center'>
-          {generations?.map((generation: Generation) => (
+          {filteredGenerations?.map((generation: Generation) => (
             <div key={generation.id}>
               {generation.generated_images?.map((image) => (
                 <button
