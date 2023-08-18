@@ -1,31 +1,30 @@
 import { useEffect, useRef } from 'react';
 
 export default function ImageCard({
-    imgAlt = 'placeholder',
-    imgSrc = '/placeholder.jpg',
-    cardRef,
-    newLimit,
-    isLast,
+    alt = 'placeholder',
+    url = '/placeholder.jpg',
+
   }) {
     const cardRef = useRef();
     useEffect(() => {
       if (!cardRef?.current) return;
-  
+
       const observer = new IntersectionObserver(([entry]) => {
-        if (isLast && entry.isIntersecting) {
-          newLimit();
-          observer.unobserve(entry.target);
-        }
+        // You might want to do something when the card is intersecting the viewport
       });
   
       observer.observe(cardRef.current);
-    }, [isLast]);
+  
+      return () => {
+        observer.disconnect();
+      };
+    }, []);
     return(
-      <div className="shadow-lg rounded-xl p-2 w-full bg-white" ref={cardRef}>
+      <div className="shadow-lg rounded-xl p-2 w-full bg-white">
         <div className="w-full h-96 relative overflow-hidden rounded-xl">
           <img
-            src={imgSrc}
-            alt={imgAlt}
+            src={url}
+            alt={alt}
             className={`w-full h-full object-cover`}
           />
         </div>

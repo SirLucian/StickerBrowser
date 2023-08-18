@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import Image from 'next/image';
 import { GeneratedImage } from './ImageGallery';
 
 

@@ -3,6 +3,7 @@ import { supabase } from '@/utils/supabaseClient';
 import ImageModal from '@/components/ImageModal';
 import ImageCard from './ImageCard';
 
+
 export interface GeneratedImage {
   id: string;
   url: string;
@@ -34,70 +35,90 @@ export interface Generation {
 
 export default function ImageGallery () {
   const [generations, setGenerations] = useState<Generation[]>([]);
-  const [displayGenerations, setDisplayGenerations] = useState(0);
-  const [selectedGeneration, setSelectedGeneration] = useState<Generation | null>(null);
+  const [selectedModal, setSelectedModal] = useState<GeneratedImage | null>(null);
   const [start, setStart] = useState(0);
-  const ref = useRef();
-
-  const fetchImages= useCallback(async () => {
-    let { data: stickers_view, error } = await supabase
-      .from('stickers_view')
+  let fetchingComplete
+  const fetchImages = useCallback(async () => {
+    let { data, error } = await supabase
+      .from('generation')
       .select('*')
       .range(start, start + 19);
+    if(data.length < 20) fetchingComplete = true;
+    if (error) console.error(error);
+    setGenerations((prev) => [...prev, ...data]);
+  }, [start]);
 
-        if (error) console.error(error);
-        setGenerations((prev) => [...prev, ...stickers_view]);
-        
-    }, [generations]);
-
-useEffect(() => {
+  useEffect(() => {
     fetchImages();
-}),[];
+  }, [fetchImages]);
 
+  const openModal = (image: GeneratedImage) => {
+    setSelectedModal(image);
+  };
 
+  const closeModal = () => {
+    setSelectedModal(null);
+  };
 
+  // Infinite scrolling setup
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-    const openModal = (image: GeneratedImage) => {
-      setSelectedGeneration(image);
-    };
   
-    const closeModal = () => {
-      setSelectedGeneration(null);
+  useEffect(() => {
+    let observer;
+  
+    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setStart((prevStart) => prevStart + 20);
+          }
+        },
+        { threshold: 1.0 }
+      );
+  
+      if (bottomRef.current) {
+        observer.observe(bottomRef.current);
+      }
+    }
+  
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
     };
-    
-    return (
-      <>
-        <main id="main">
+  }, [bottomRef, setStart]);
+  return (
+    <>
+      <main id="main">
           <div className="container mx-auto">
             <h1 style={{ textAlign: 'center' }}>Generation Gallery</h1>
-            <div className='flex flex-wrap gap-4 justify-center'>
-
-            {
-  generations?.map((generation: Generation, genIndex) => (
-    <div key={generation.id}>
-    {generation.generated_images?.map((image, index)=>(
-      <button key={`${image.id}-${index}`} 
-      onClick={() => openModal(image)} 
-      >
-        <ImageCard 
-          imgSrc={image.url}
-          imgAlt={generation.prompt}
-          isLast={index === generation.generated_images.length - 1}
-          newLimit={() => setStart(start + 20)}
-          ref={index === generation.generated_images.length - 1 ? ref.current : null}
-        />
-      </button>
-    ))}
-    </div>
-  ))
-}
-              </div>
-            <div id="generations-bottom"></div>
-          </div>
-        </main>
-        {selectedGeneration && (
-          <ImageModal image={selectedGeneration} onClose={closeModal} />
+            </div>
+        <div className='flex flex-wrap gap-4 justify-center'>
+          {generations?.map((generation: Generation) => (
+            <div key={generation.id}>
+              {generation.generated_images?.map((image) => (
+                <button
+                  key={image.id}
+                  onClick={() => openModal(image)}
+                >
+                  <ImageCard
+                    url={image.url}
+                    alt={generation.prompt}
+                    ref={cardRef}
+                  />
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+        {!fetchingComplete && <div className='h-20' ref={bottomRef} id="generations-bottom">Fetching more</div>}
+      </main>
+        {selectedModal && (
+          <ImageModal image={selectedModal} onClose={closeModal} />
         )}
-      </>
-    )
-  }
+    </>
+  );
+}
+
