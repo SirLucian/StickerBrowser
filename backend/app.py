@@ -43,7 +43,12 @@ def remove_background():
         data={'image_url': image_url},
         headers={'X-Api-Key': REMOVEBG_API_KEY},
     )
-    return response.content
+    return flask.send_file(
+        io.BytesIO(response.content),
+        mimetype='image/png',
+        as_attachment=True,
+        attachment_filename='output.png'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
