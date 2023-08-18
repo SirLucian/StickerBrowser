@@ -29,12 +29,17 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
   };
 
   return (
-    <div>
+    <div className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity flex justify-center'>
+      <div className='max-w-3xl flex flex-col justify-center'>
+
       <img src={image.url} alt={image.id} />
-      <button onClick={favoriteImage}>Favorite</button>
-      <button onClick={unfavoriteImage}>Unfavorite</button>
-      <button onClick={removeBackground}>Remove Background</button>
-      <button onClick={onClose}>Close</button>
+      <div className='flex content-between w-full'>
+        <button className='p-2' onClick={favoriteImage}>Favorite</button>
+        <button className='p-2' onClick={unfavoriteImage}>Unfavorite</button>
+        <button className='p-2' onClick={removeBackground}>Remove Background</button>
+        <button className='p-2' onClick={onClose}>Close</button>
+      </div>
+      </div>
     </div>
   );
 }

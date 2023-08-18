@@ -33,12 +33,11 @@ export interface Generation {
   user_id: string;
 }
 
-
-
 export default function ImageGallery ({ search }) {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedModal, setSelectedModal] = useState<GeneratedImage | null>(null);
   const [start, setStart] = useState(0);
+  const [filterFavorites, setFilterFavorites] = useState(false);
   let fetchingComplete
   const fetchImages = useCallback(async () => {
     let { data, error } = await supabase
@@ -62,42 +61,49 @@ export default function ImageGallery ({ search }) {
     setSelectedModal(null);
   };
 
+  const handleFilter = () => {
+    setFilterFavorites(!filterFavorites);
+  };
+
   const filteredGenerations = generations.filter(generation => 
-    generation.generated_images.some(image => image.url.includes(search))
-  );
+    generation.generated_images.some(image => image.url.includes(search) && (!filterFavorites || image.isFavorited))
+    );
+    
+    // Infinite scrolling setup
+    const bottomRef = useRef<HTMLDivElement>(null);
+    const cardRef = useRef<HTMLDivElement>(null);
+  
+    
+    useEffect(() => {
+      let observer;
+    
+      if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+        observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setStart((prevStart) => prevStart + 20);
+            }
+          },
+          { threshold: 1.0 }
+        );
+    
+        if (bottomRef.current) {
+          observer.observe(bottomRef.current);
+        }
+        
+          return () => {
+            if (observer) {
+              observer.disconnect();
+            }
+          };
+        }}, [bottomRef, setStart]);
 
-
-  // Infinite scrolling setup
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  
-  useEffect(() => {
-    let observer;
-  
-    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setStart((prevStart) => prevStart + 20);
-          }
-        },
-        { threshold: 1.0 }
-      );
-  
-      if (bottomRef.current) {
-        observer.observe(bottomRef.current);
-      }
-    }
-  
-    return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-    };
-  }, [bottomRef, setStart]);
+    
   return (
     <>
+      <button onClick={handleFilter}>
+        {filterFavorites ? 'Show all' : 'Show favorites'}
+      </button>
       <main id="main">
           <div className="container mx-auto">
             <h1 style={{ textAlign: 'center' }}>Generation Gallery</h1>
@@ -125,6 +131,6 @@ export default function ImageGallery ({ search }) {
           <ImageModal image={selectedModal} onClose={closeModal} />
         )}
     </>
-  );
+  )
 }
 
