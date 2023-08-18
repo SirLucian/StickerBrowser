@@ -1,16 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GeneratedImage } from './ImageGallery';
 import { supabase } from '@/utils/supabaseClient';
-const handleFavorite = async (imageId) => {
-  const { data, error } = await supabase.from('user_favorites')
-  .insert([{user_id:user.id, image_id: imageId }]).select()
-
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('Image favorited:', data);
-  }
-};
 const user = { id: `10f9a826-a452-4bd8-8b5e-733ca9951679`}
 interface ImageCardProps {
   image: GeneratedImage
@@ -19,6 +9,18 @@ export default function ImageCard({
   image
   
 }:ImageCardProps) {
+    const [isFavorited, setIsFavorited] = useState(false);
+    const handleFavorite = async (imageId) => {
+      const { data, error } = await supabase.from('user_favorites')
+      .insert([{user_id:user.id, image_id: imageId }]).select()
+
+      if (error) {
+        console.error(error);
+      } else {
+        console.log('Image favorited:', data);
+        setIsFavorited(!isFavorited);
+      }
+    };
     const cardRef = useRef();
     useEffect(() => {
       if (!cardRef?.current) return;
@@ -41,7 +43,9 @@ export default function ImageCard({
             alt={image.url}
             className={`w-full h-full object-cover`}
           />
-          <button className='absolute bottom-0' onClick={() => handleFavorite(image.id)}>Favorite</button>
+          <button className='absolute bottom-0' onClick={() => handleFavorite(image.id)}>
+            {isFavorited ? '❤️' : '🤍'}
+          </button>
         </div>
       </div>
     )
