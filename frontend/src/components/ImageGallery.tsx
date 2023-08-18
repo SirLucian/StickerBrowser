@@ -33,6 +33,8 @@ export interface Generation {
   user_id: string;
 }
 
+
+
 export default function ImageGallery () {
   const [generations, setGenerations] = useState<Generation[]>([]);
   const [selectedModal, setSelectedModal] = useState<GeneratedImage | null>(null);
@@ -104,8 +106,7 @@ export default function ImageGallery () {
                   onClick={() => openModal(image)}
                 >
                   <ImageCard
-                    url={image.url}
-                    alt={generation.prompt}
+                    image={image}
                     ref={cardRef}
                   />
                 </button>
