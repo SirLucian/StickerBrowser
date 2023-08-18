@@ -20,12 +20,10 @@ const ImageModal: React.FC<ImageModalProps> = ({ image, onClose }) => {
   };
 
   const removeBackground = async () => {
-    const response = await axios.post('http://localhost:5000/removebg', {
+    const response = await axios.post('/api/removebg', {
       url: image.url,
     });
-    const blob = new Blob([response.data], { type: 'image/png' });
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
+    window.open(URL.createObjectURL(new Blob([response.data], { type: 'image/png' })), '_blank');
   };
 
   return (
