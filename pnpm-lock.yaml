@@ -9,6 +9,11 @@ dependencies:
     specifier: ^2.32.0
     version: 2.32.0
 
+devDependencies:
+  '@types/js-base64':
+    specifier: ^3.3.1
+    version: 3.3.1
+
 packages:
 
   /@supabase/functions-js@2.1.2:
@@ -66,6 +71,13 @@ packages:
       - encoding
       - supports-color
     dev: false
+
+  /@types/js-base64@3.3.1:
+    resolution: {integrity: sha512-Zw33oQNAvDdAN9b0IE5stH0y2MylYvtU7VVTKEJPxhyM2q57CVaNJhtJW258ah24NRtaiA23tptUmVn3dmTKpw==}
+    deprecated: This is a stub types definition. js-base64 provides its own type definitions, so you do not need this installed.
+    dependencies:
+      js-base64: 3.7.5
+    dev: true
 
   /@types/node@20.5.0:
     resolution: {integrity: sha512-Mgq7eCtoTjT89FqNoTzzXg2XvCi5VMhRV6+I2aYanc6kQCBImeNaAYRs/DyoVqk1YEUJK5gN9VO7HRIdz4Wo3Q==}
@@ -149,6 +161,10 @@ packages:
   /is-typedarray@1.0.0:
     resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
     dev: false
+
+  /js-base64@3.7.5:
+    resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==}
+    dev: true
 
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}

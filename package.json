@@ -1,5 +1,8 @@
 {
 	"dependencies": {
 		"@supabase/supabase-js": "^2.32.0"
+	},
+	"devDependencies": {
+		"@types/js-base64": "^3.3.1"
 	}
 }
